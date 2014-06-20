@@ -1,0 +1,108 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{EFC4A94E-2C29-4630-ADA8-7814931780FB}</ProjectGuid>
+    <OutputType>WinExe</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>Blender</RootNamespace>
+    <AssemblyName>BlendReader</AssemblyName>
+    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup>
+    <StartupObject />
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="Aga.Controls">
+      <HintPath>ExtLib\TreeViewAdv\Aga.Controls.dll</HintPath>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.Windows.Forms" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Application\BlendReader.cs" />
+    <Compile Include="Application\IBlenderReaderListener.cs" />
+    <Compile Include="Application\OpenFileService.cs" />
+    <Compile Include="DataAccess\BlendLoader.cs" />
+    <Compile Include="DataAccess\BlendStructures.cs" />
+    <Compile Include="Domain\BlendAddress.cs" />
+    <Compile Include="Domain\BlendAddressMapper.cs" />
+    <Compile Include="Domain\BlendPrimitiveType.cs" />
+    <Compile Include="Domain\BlendEntityBase.cs" />
+    <Compile Include="Domain\BlendStructureType.cs" />
+    <Compile Include="Domain\BlendValue.cs" />
+    <Compile Include="Domain\QualifiedBlendType.cs" />
+    <Compile Include="Domain\BlendTypeRepository.cs" />
+    <Compile Include="Domain\IBlendType.cs" />
+    <Compile Include="Domain\UnknownBlendType.cs" />
+    <Compile Include="Presentation\Dialog.cs" />
+    <Compile Include="Presentation\EntityTreeView.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="Presentation\MainForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Presentation\MainForm.Designer.cs">
+      <DependentUpon>MainForm.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Presentation\PropertyPanel.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="Presentation\StructureViewModel.cs" />
+    <Compile Include="Program.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Util\BinaryUtil.cs" />
+    <Compile Include="Util\BlenderException.cs" />
+    <Compile Include="Util\ConvertUtil.cs" />
+    <Compile Include="Util\ListUtil.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="App.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Presentation\MainForm.resx">
+      <DependentUpon>MainForm.cs</DependentUpon>
+    </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="TODO.txt" />
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>
