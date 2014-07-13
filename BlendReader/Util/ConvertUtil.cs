@@ -15,10 +15,12 @@ namespace Blender
 			foreach (object o in array)
 			{
 				char? c = (char?)o;
-				if (c != '\0')
+				if (c == '\0')
 				{
-					sb.Append(c);
+					break;
 				}
+
+				sb.Append(c);
 			}
 
 			return sb.ToString();
