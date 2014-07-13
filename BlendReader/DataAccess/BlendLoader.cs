@@ -109,12 +109,12 @@ namespace Blender
 		{
 			var declList = new List<_StructureDecl>();
 			var header = BlendStructures.GlobalHeader.ReadValue(context);
-			if ((char)header.GetMember("pointer_size") == '_')
+			if ((char)header.GetMemberAsValue("pointer_size") == '_')
 			{
 				throw new BlenderException("32bit pointer-size is unsupported");
 			}
 
-			if ((char)header.GetMember("endianness") == 'V')
+			if ((char)header.GetMemberAsValue("endianness") == 'V')
 			{
 				throw new BlenderException("big endian is unsupported");
 			}
@@ -122,8 +122,8 @@ namespace Blender
 			while (true)
 			{
 				var fileBlock = BlendStructures.FileBlockHeader.ReadValue(context);
-				var code = ConvertUtil.CharArray2String(fileBlock.GetMember("code"));
-				int size = (int)fileBlock.GetMember("size");
+				var code = ConvertUtil.CharArray2String(fileBlock.GetMemberAsValue("code"));
+				int size = (int)fileBlock.GetMemberAsValue("size");
 
 				if (code == "DNA1")
 				{
@@ -339,9 +339,9 @@ namespace Blender
 			while (true)
 			{
 				var fileBlock = BlendStructures.FileBlockHeader.ReadValue(context);
-				var code = ConvertUtil.CharArray2String(fileBlock.GetMember("code"));
-				int size = (int)fileBlock.GetMember("size");
-				BlendAddress oldAddress = (BlendAddress)fileBlock.GetMember("old_memory_address");
+				var code = ConvertUtil.CharArray2String(fileBlock.GetMemberAsValue("code"));
+				int size = (int)fileBlock.GetMemberAsValue("size");
+				BlendAddress oldAddress = (BlendAddress)fileBlock.GetMemberAsValue("old_memory_address");
 
 				switch (code)
 				{
@@ -363,20 +363,17 @@ namespace Blender
 						context.reader.ReadBytes(size);
 						break;
 
-					//case "DATA":
-					//case "GLOB":
-					//case "USER":
 					default:
 						{
-							int sdnaIndex = (int)fileBlock.GetMember("sdna_index");
-							int count = (int)fileBlock.GetMember("count");
+							int sdnaIndex = (int)fileBlock.GetMemberAsValue("sdna_index");
+							int count = (int)fileBlock.GetMemberAsValue("count");
 							var type = repository.Find(sdnaIndex);
-							int tmp = type.SizeOf();
 
 							// register address mapping
 							context.mapper.AddEntry(oldAddress.Address, (int)context.reader.BaseStream.Position, type);
 
 							var blockEntity = new BlendEntityBase(code, null);
+							blockEntity.OldAddress = oldAddress;
 
 							if (count == 1 && sdnaIndex == 0 && size != type.SizeOf())
 							{

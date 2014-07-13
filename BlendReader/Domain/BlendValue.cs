@@ -17,20 +17,30 @@ namespace Blender
 			RawValue = value;
 		}
 
-		public object GetAt(int index)
+		public BlendValue GetAt(int index)
 		{
 			var objs = RawValue as object[];
-			return objs[index];
+			var type = (QualifiedBlendType)Type;
+			return new BlendValue(type.BaseType, objs[index]);
 		}
 
-		public object GetAt(int index1, int index2)
+		public BlendValue GetAt(int index1, int index2)
 		{
 			var objs = RawValue as object[];
 			var tmp = objs[index1] as object[];
-			return tmp[index2];
+			var type = (QualifiedBlendType)Type;
+			return new BlendValue(type.BaseType, tmp[index2]);
 		}
 
-		public object GetMember(string name)
+		public BlendValue GetMember(string name)
+		{
+			var table = RawValue as Dictionary<string, object>;
+			var type = (BlendStructureType)Type;
+			var memberType = type.MemberDecls.Where(dcl => dcl.Name == name).Select(dcl => dcl.Type).First();
+			return new BlendValue(memberType, table[name]);
+		}
+
+		public object GetMemberAsValue(string name)
 		{
 			var table = RawValue as Dictionary<string, object>;
 			return table[name];

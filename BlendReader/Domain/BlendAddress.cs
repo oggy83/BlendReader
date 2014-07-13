@@ -82,12 +82,17 @@ namespace Blender
 
 		public BlendValue Dereference()
 		{
-			return Dereference(m_mapper.GetHintType(m_address));
+			return m_mapper != null? Dereference(m_mapper.GetHintType(m_address)) : null;
 		}
 
 		public bool IsNull()
 		{
 			return Address == 0;
+		}
+
+		public static BlendAddress Null()
+		{
+			return new BlendAddress(0, null);
 		}
 
 		#region private members

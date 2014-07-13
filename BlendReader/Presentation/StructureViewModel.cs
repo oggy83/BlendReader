@@ -51,7 +51,7 @@ namespace Blender
 					var type = (BlendStructureType)node.m_value.Type;
 					foreach (var decl in type.MemberDecls)
 					{
-						var value = new BlendValue(decl.Type, node.m_value.GetMember(decl.Name));
+						var value = new BlendValue(decl.Type, node.m_value.GetMemberAsValue(decl.Name));
 						var childNode = new _NodeModel(decl.Name, value);
 						yield return childNode;
 					}
@@ -96,7 +96,7 @@ namespace Blender
 						case 1 :
 							for (int i = 0; i < arrayType.GetLength(0); ++i)
 							{
-								var value = new BlendValue(arrayType.BaseType, node.m_value.GetAt(i));
+								var value = node.m_value.GetAt(i);
 								var childNode = new _NodeModel(node.Name + "[" + i + "]", value);
 								yield return childNode;
 							}
@@ -108,7 +108,7 @@ namespace Blender
 							{
 								for (int j = 0; j < arrayType.GetLength(1); ++j)
 								{
-									var value = new BlendValue(arrayType.BaseType, node.m_value.GetAt(i, j));
+									var value = node.m_value.GetAt(i, j);
 									var childNode = new _NodeModel(node.Name + "[" + i + "]" + "[" + j + "]", value);
 									yield return childNode;
 								}

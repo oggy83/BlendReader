@@ -37,6 +37,12 @@ namespace Blender
 			}
 		}
 
+		// file block only
+		public BlendAddress OldAddress
+		{
+			get;
+			set;
+		}
 
 		#endregion // properties
 
@@ -45,6 +51,7 @@ namespace Blender
 			m_name = name;
 			m_value = value;
 			m_children = new List<BlendEntityBase>();
+			OldAddress = BlendAddress.Null();
 		}
 
 
