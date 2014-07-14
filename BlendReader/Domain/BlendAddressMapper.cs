@@ -4,18 +4,19 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.IO;
+using System.Diagnostics;
 
 namespace Blender
 {
 	/// <summary>
-	/// This class maps old memory address to offset from the top of .blend binary
+	/// This class maps old memory address to range of .blend binary
 	/// </summary>
 	public class BlendAddressMapper
 	{
 		public BlendAddressMapper(byte[] binary)
 		{
 			m_binry = binary;
-			m_map = new Dictionary<ulong, Tuple<int, IBlendType>>();
+			m_map = new Dictionary<ulong, Tuple<int, int, IBlendType>>();
 		}
 
 		/// <summary>
@@ -23,10 +24,12 @@ namespace Blender
 		/// </summary>
 		/// <param name="address">old memory address</param>
 		/// <param name="offset">offset from the top of .blend binary</param>
+		/// <param name="size">entry binary size [byte]</param>
 		/// <param name="type">hint type for dereference</param>
-		public void AddEntry(ulong address, int offset, IBlendType type)
+		public void AddEntry(ulong address, int offset, int size, IBlendType type)
 		{
-			m_map.Add(address, Tuple.Create(offset, type));
+			Debug.Assert(m_binry.Length >= (offset + size), "size is too big");
+			m_map.Add(address, Tuple.Create(offset, size, type));
 		}
 
 		/// <summary>
@@ -36,13 +39,13 @@ namespace Blender
 		/// <returns></returns>
 		public Stream GetStreamFromAddress(ulong address)
 		{
-			Tuple<int, IBlendType> tmp;
+			Tuple<int, int, IBlendType> tmp;
 			if (!m_map.TryGetValue(address, out tmp))
 			{
 				return null;
 			}
 
-			return new MemoryStream(m_binry, tmp.Item1, m_binry.Length - tmp.Item1); 
+			return new MemoryStream(m_binry, tmp.Item1, tmp.Item2); 
 		}
 
 		/// <summary>
@@ -52,20 +55,20 @@ namespace Blender
 		/// <returns></returns>
 		public IBlendType GetHintType(ulong address)
 		{
-			Tuple<int, IBlendType> tmp;
+			Tuple<int, int, IBlendType> tmp;
 			if (!m_map.TryGetValue(address, out tmp))
 			{
 				return null;
 			}
 
-			return tmp.Item2;
+			return tmp.Item3;
 		}
 
 		#region private members
 
 		private byte[] m_binry;
 
-		private Dictionary<ulong, Tuple<int, IBlendType>> m_map;
+		private Dictionary<ulong, Tuple<int, int, IBlendType>> m_map;
 
 		#endregion // private members
 	}

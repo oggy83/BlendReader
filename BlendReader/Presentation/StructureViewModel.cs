@@ -64,17 +64,17 @@ namespace Blender
 					var baseType = pointerType.BaseType;
 					if (address.CanDereference(baseType))
 					{
-						BlendValue value;
+						List<BlendValue> result = null;
 						try
 						{
 							if (baseType.Equals(BlendPrimitiveType.Void()))
 							{
 								// void pointer
-								value = address.Dereference();
+								result = address.DereferenceAll();
 							}
 							else
 							{
-								value = address.Dereference(baseType);
+								result = address.DereferenceAll(baseType);
 							}
 						}
 						catch (BlenderException e)
@@ -83,8 +83,21 @@ namespace Blender
 							yield break;
 						}
 
-						var childNode = new _NodeModel("*" + node.Name, value);
-						yield return childNode;
+						if (result.Count == 1)
+						{
+							var childNode = new _NodeModel("*" + node.Name, result[0]);
+							yield return childNode;
+						}
+						else 
+						{
+							// If the number of dereferenced objects is over 1, we show it as an array.
+							for (int i = 0; i < result.Count; ++i)
+							{
+								var value = result[i];
+								var childNode = new _NodeModel(node.Name + "[" + i + "]", value);
+								yield return childNode;
+							}
+						}
 					}
 				}
 				else if (node.IsArray)

@@ -60,7 +60,7 @@ namespace Blender
 			return false;
 		}
 
-		public BlendValue Dereference(IBlendType type)
+		public BlendValue DereferenceOne(IBlendType type)
 		{
 			BlendValue result = null;
 			try
@@ -80,9 +80,39 @@ namespace Blender
 			return result;
 		}
 
-		public BlendValue Dereference()
+		public List<BlendValue> DereferenceAll(IBlendType type)
 		{
-			return m_mapper != null? Dereference(m_mapper.GetHintType(m_address)) : null;
+			var result = new List<BlendValue>();
+			try
+			{
+				int offset = (int)m_address;
+				using (var reader = new BinaryReader(m_mapper.GetStreamFromAddress(m_address)))
+				{
+					result.Capacity = (int)reader.BaseStream.Length / type.SizeOf();
+					var context = new ReadValueContext() { reader = reader, mapper = m_mapper };
+					while (reader.BaseStream.Position < reader.BaseStream.Length)
+					{
+						var val = type.ReadValue(context);
+						result.Add(val);
+					}
+				}
+			}
+			catch (Exception e)
+			{
+				throw new BlenderException("Failed to dereference {0} as {1}", AddressString, type.Name);
+			}
+
+			return result;
+		}
+
+		public BlendValue DereferenceOne()
+		{
+			return m_mapper != null? DereferenceOne(m_mapper.GetHintType(m_address)) : null;
+		}
+
+		public List<BlendValue> DereferenceAll()
+		{
+			return m_mapper != null ? DereferenceAll(m_mapper.GetHintType(m_address)) : new List<BlendValue>();
 		}
 
 		public bool IsNull()

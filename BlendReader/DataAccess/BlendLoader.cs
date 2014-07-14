@@ -370,7 +370,7 @@ namespace Blender
 							var type = repository.Find(sdnaIndex);
 
 							// register address mapping
-							context.mapper.AddEntry(oldAddress.Address, (int)context.reader.BaseStream.Position, type);
+							context.mapper.AddEntry(oldAddress.Address, (int)context.reader.BaseStream.Position, count * type.SizeOf(), type);
 
 							var blockEntity = new BlendEntityBase(code, null);
 							blockEntity.OldAddress = oldAddress;
