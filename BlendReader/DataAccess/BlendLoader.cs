@@ -338,53 +338,45 @@ namespace Blender
 			BlendStructures.GlobalHeader.ReadValue(context);
 			while (true)
 			{
-				var fileBlock = BlendStructures.FileBlockHeader.ReadValue(context);
-				var code = ConvertUtil.CharArray2String(fileBlock.GetMemberAsValue("code"));
-				int size = (int)fileBlock.GetMemberAsValue("size");
-				BlendAddress oldAddress = (BlendAddress)fileBlock.GetMemberAsValue("old_memory_address");
-
-				switch (code)
+				var blockEntity = BlockHeaderEntity.ReadValue(context);
+				switch (blockEntity.Code)
 				{
 					case "DNA1":
 						// skip
-						result.Add(new BlendEntityBase(code, null));
-						context.reader.ReadBytes(size);
+						result.Add(blockEntity);
+						context.reader.ReadBytes(blockEntity.Size);
 						break;
 
 					case "ENDB":
 						// end of file
-						result.Add(new BlendEntityBase(code, null));
+						result.Add(blockEntity);
 						return result;
 
 					case "REND": // RenderInfo
 					case "TEST": // Preview Image
 						// skip
-						result.Add(new BlendEntityBase(code, null));
-						context.reader.ReadBytes(size);
+						result.Add(blockEntity);
+						context.reader.ReadBytes(blockEntity.Size);
 						break;
 
 					default:
 						{
-							int sdnaIndex = (int)fileBlock.GetMemberAsValue("sdna_index");
-							int count = (int)fileBlock.GetMemberAsValue("count");
-							var type = repository.Find(sdnaIndex);
+							var type = repository.Find(blockEntity.SdnaIndex);
 
 							// register address mapping
-							context.mapper.AddEntry(oldAddress.Address, (int)context.reader.BaseStream.Position, count * type.SizeOf(), type);
-
-							var blockEntity = new BlendEntityBase(code, null);
-							blockEntity.OldAddress = oldAddress;
-
-							if (count == 1 && sdnaIndex == 0 && size != type.SizeOf())
+							int sdnaSize = blockEntity.Count * type.SizeOf();
+							context.mapper.AddEntry(blockEntity.OldAddress.Address, (int)context.reader.BaseStream.Position, sdnaSize, type);
+							
+							if (blockEntity.Count == 1 && blockEntity.SdnaIndex == 0 && blockEntity.Size != type.SizeOf())
 							{
 								// Error? skip
-								result.Add(new BlendEntityBase(code, null));
-								context.reader.ReadBytes(size);
+								result.Add(blockEntity);
+								context.reader.ReadBytes(blockEntity.Size);
 							}
 							else
 							{
-								Debug.Assert(type.SizeOf() * count == size, "structure size unmatched");
-								for (int i = 0; i < count; ++i)
+								Debug.Assert(type.SizeOf() * blockEntity.Count == blockEntity.Size, "structure size unmatched");
+								for (int i = 0; i < blockEntity.Count; ++i)
 								{
 									var value = type.ReadValue(context);
 									blockEntity.Children.Add(new BlendEntityBase(value.Type.Name, value));
@@ -396,18 +388,7 @@ namespace Blender
 
 						}
 						break;
-
-					
-					/*
-					default:
-						// register address mapping
-						context.mapper.AddEntry(oldAddress.Address, (int)context.reader.BaseStream.Position);
-
-						// skip
-						result.Add(new BlendEntityBase(code, null));
-						context.reader.ReadBytes(size);
-						break;
-					*/
+				
 				}
 			}
 
