@@ -28,13 +28,13 @@ namespace Blender
 
 		#region from IBlendReaderListener
 
-		public void OnLoadDocument(BlendEntityBase[] entities)
+		public void OnLoadDocument(BlockHeaderEntity[] entities)
 		{
 			m_sceneTree.Nodes.Clear();// clear old entities
 
 			foreach (var entity in entities)
 			{
-				var node = new TreeNode(entity.Name);
+				var node = new TreeNode();
 				if (entity.Children.Count() != 0)
 				{
 					int index = 0;
@@ -43,11 +43,15 @@ namespace Blender
 						var childNode = new TreeNode(child.Name + " [" + index + "]");
 						childNode.Tag = child;
 						node.Nodes.Add(childNode);
-						
+
 						index++;
 					}
 
 					node.Text = entity.Name + " (" + entity.Children[0].Name + " x " + entity.Children.Count() + ")";
+				}
+				else
+				{
+					node.Text = entity.Name + " (" + entity.Size + "byte)";
 				}
 
 				m_sceneTree.Nodes.Add(node);

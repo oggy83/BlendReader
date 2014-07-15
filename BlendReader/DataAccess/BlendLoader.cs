@@ -16,7 +16,7 @@ namespace Blender
 			m_repository = rep;
 		}
 
-		public List<BlendEntityBase> FromFile(string filePath)
+		public List<BlockHeaderEntity> FromFile(string filePath)
 		{
 			using (var stream = new FileStream(filePath, FileMode.Open))
 			{
@@ -24,7 +24,7 @@ namespace Blender
 			}
 		}
 
-		public List<BlendEntityBase> FromMemory(Stream stream)
+		public List<BlockHeaderEntity> FromMemory(Stream stream)
 		{
 			var reader = new BinaryReader(stream);
 			var mapper = new BlendAddressMapper(BinaryUtil.ReadBytesFromStream(stream));
@@ -331,9 +331,9 @@ namespace Blender
 		private static Regex ArraySizeRegex = new Regex(@"\[(\d+)\]");
 		private static Regex PointerAndNameRegex = new Regex(@"^(\**)(\w+)");
 
-		private static List<BlendEntityBase> _CreateEntityList(ReadValueContext context, BlendTypeRepository repository)
+		private static List<BlockHeaderEntity> _CreateEntityList(ReadValueContext context, BlendTypeRepository repository)
 		{
-			var result = new List<BlendEntityBase>();
+			var result = new List<BlockHeaderEntity>();
 
 			BlendStructures.GlobalHeader.ReadValue(context);
 			while (true)
@@ -365,7 +365,7 @@ namespace Blender
 
 							// register address mapping
 							int sdnaSize = blockEntity.Count * type.SizeOf();
-							context.mapper.AddEntry(blockEntity.OldAddress.Address, (int)context.reader.BaseStream.Position, sdnaSize, type);
+							context.mapper.AddEntry(blockEntity.OldAddress.Address, (int)context.reader.BaseStream.Position, blockEntity.Size, type);
 							
 							if (blockEntity.Count == 1 && blockEntity.SdnaIndex == 0 && blockEntity.Size != type.SizeOf())
 							{

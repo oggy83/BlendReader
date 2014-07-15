@@ -12,6 +12,6 @@ namespace Blender
 		/// on create entities from file
 		/// </summary>
 		/// <param name="entities">entities which represents a file document</param>
-		void OnLoadDocument(BlendEntityBase[] entities);
+		void OnLoadDocument(BlockHeaderEntity[] entities);
 	}
 }

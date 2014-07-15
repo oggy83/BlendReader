@@ -23,7 +23,7 @@ namespace Blender
 			/// <summary>
 			/// entities which created from file
 			/// </summary>
-			public List<BlendEntityBase> EntityList;
+			public List<BlockHeaderEntity> EntityList;
 
 			public string ErrorMessage;
 		}
