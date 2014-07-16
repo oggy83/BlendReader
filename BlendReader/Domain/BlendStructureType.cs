@@ -122,15 +122,32 @@ namespace Blender
 		/// <seealso cref="IBlendType.ReadValue"/>
 		public BlendValue ReadValue(ReadValueContext context)
 		{
-			var table = new Dictionary<string, object>();
+			var rawValue = new _RawValue();
 
 			foreach (var decl in m_decls)
 			{
 				var obj = decl.Type.ReadValue(context).RawValue;
-				table.Add(decl.Name, obj);
+				rawValue.Add(decl.Name, new BlendValue(decl.Type, obj));
 			}
 
-			return new BlendValue(this, table);
+			return new BlendValue(this, rawValue);
+		}
+
+		public static BlendValue GetMemberValue(BlendValue value, string name)
+		{
+			Debug.Assert(value.Type.GetType() == typeof(BlendStructureType), "tyep unmatched");
+			var rawValue = value.RawValue as Dictionary<string, BlendValue>;
+			return rawValue[name];
+		}
+
+		public static IEnumerable<object> GetAllRawValue(BlendValue value)
+		{
+			Debug.Assert(value.Type.GetType() == typeof(BlendStructureType), "tyep unmatched");
+			var rawValue = value.RawValue as Dictionary<string, BlendValue>;
+			foreach (var memberValue in rawValue.Values.SelectMany(v => v.GetAllValue()))
+			{
+				yield return memberValue;
+			}
 		}
 
 		/// <summary>
@@ -176,6 +193,12 @@ namespace Blender
 		{
 			return new BlendStructureType(name, sdnaIndex, null);
 		}
+
+		#region private types
+
+		private class _RawValue : Dictionary<string, BlendValue> { }
+
+		#endregion // private types
 
 		#region private members
 

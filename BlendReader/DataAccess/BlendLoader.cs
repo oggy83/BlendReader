@@ -109,12 +109,12 @@ namespace Blender
 		{
 			var declList = new List<_StructureDecl>();
 			var header = BlendStructures.GlobalHeader.ReadValue(context);
-			if ((char)header.GetMemberAsValue("pointer_size") == '_')
+			if ((char)header.GetMember("pointer_size").RawValue == '_')
 			{
 				throw new BlenderException("32bit pointer-size is unsupported");
 			}
 
-			if ((char)header.GetMemberAsValue("endianness") == 'V')
+			if ((char)header.GetMember("endianness").RawValue == 'V')
 			{
 				throw new BlenderException("big endian is unsupported");
 			}
@@ -122,8 +122,8 @@ namespace Blender
 			while (true)
 			{
 				var fileBlock = BlendStructures.FileBlockHeader.ReadValue(context);
-				var code = ConvertUtil.CharArray2String(fileBlock.GetMemberAsValue("code"));
-				int size = (int)fileBlock.GetMemberAsValue("size");
+				var code = ConvertUtil.CharArray2String(fileBlock.GetMember("code").RawValue);
+				int size = (int)fileBlock.GetMember("size").RawValue;
 
 				if (code == "DNA1")
 				{

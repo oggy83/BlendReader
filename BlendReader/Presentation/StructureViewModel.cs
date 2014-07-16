@@ -51,7 +51,7 @@ namespace Blender
 					var type = (BlendStructureType)node.m_value.Type;
 					foreach (var decl in type.MemberDecls)
 					{
-						var value = new BlendValue(decl.Type, node.m_value.GetMemberAsValue(decl.Name));
+						var value = new BlendValue(decl.Type, node.m_value.GetMember(decl.Name).RawValue);
 						var childNode = new _NodeModel(decl.Name, value);
 						yield return childNode;
 					}

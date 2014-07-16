@@ -62,12 +62,12 @@ namespace Blender
 		#endregion // properties
 
 		public BlockHeaderEntity(BlendValue value)
-			: base(ConvertUtil.CharArray2String(value.GetMemberAsValue("code")), value)
+			: base(ConvertUtil.CharArray2String(value.GetMember("code").RawValue), value)
 		{
-			m_address = (BlendAddress)Value.GetMemberAsValue("old_memory_address");
-			m_size = (int)value.GetMemberAsValue("size");
-			m_sdnaIndex = (int)value.GetMemberAsValue("sdna_index");
-			m_count = (int)value.GetMemberAsValue("count");
+			m_address = (BlendAddress)Value.GetMember("old_memory_address").RawValue;
+			m_size = (int)value.GetMember("size").RawValue;
+			m_sdnaIndex = (int)value.GetMember("sdna_index").RawValue;
+			m_count = (int)value.GetMember("count").RawValue;
 		}
 
 		public static BlockHeaderEntity ReadValue(ReadValueContext context)
