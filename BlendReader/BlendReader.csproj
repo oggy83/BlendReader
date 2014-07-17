@@ -57,15 +57,17 @@
     <Compile Include="DataAccess\BlendStructures.cs" />
     <Compile Include="Domain\BlendAddress.cs" />
     <Compile Include="Domain\BlendAddressMapper.cs" />
-    <Compile Include="Domain\BlendPrimitiveType.cs" />
+    <Compile Include="Domain\Type\BlendPointerType.cs" />
+    <Compile Include="Domain\Type\BlendPrimitiveType.cs" />
     <Compile Include="Domain\BlendEntityBase.cs" />
-    <Compile Include="Domain\BlendStructureType.cs" />
+    <Compile Include="Domain\Type\BlendStructureType.cs" />
     <Compile Include="Domain\BlendValue.cs" />
     <Compile Include="Domain\BlockHeaderEntity.cs" />
-    <Compile Include="Domain\QualifiedBlendType.cs" />
-    <Compile Include="Domain\BlendTypeRepository.cs" />
-    <Compile Include="Domain\IBlendType.cs" />
-    <Compile Include="Domain\UnknownBlendType.cs" />
+    <Compile Include="Domain\Type\BlendTypeFactory.cs" />
+    <Compile Include="Domain\Type\QualifiedBlendType.cs" />
+    <Compile Include="Domain\Type\BlendTypeRepository.cs" />
+    <Compile Include="Domain\Type\IBlendType.cs" />
+    <Compile Include="Domain\Type\UnknownBlendType.cs" />
     <Compile Include="Presentation\Dialog.cs" />
     <Compile Include="Presentation\EntityTreeView.cs">
       <SubType>Component</SubType>

@@ -287,7 +287,7 @@ namespace Blender
 			if (match.Success)
 			{
 				// function pointer is unsupported 
-				int ptSize = QualifiedBlendType.GetPointerSizeOf();
+				int ptSize = BlendPointerType.GetPointerSizeOf();
 				return new BlendStructureType.MemberDecl(match.Groups[1].Value, new UnknownBlendType(description, ptSize));
 			}
 
@@ -302,7 +302,7 @@ namespace Blender
 				if (pointers.Length >= 2)
 				{
 					// double pointer is unsupported
-					int ptSize = QualifiedBlendType.GetPointerSizeOf();
+					int ptSize = BlendPointerType.GetPointerSizeOf();
 					return new BlendStructureType.MemberDecl(baseName, new UnknownBlendType(description, ptSize));
 				}
 				
@@ -315,7 +315,7 @@ namespace Blender
 					dimCountArray.Add(int.Parse(size));
 				}
 
-				var resultType = QualifiedBlendType.From(type, isPointer, dimCountArray.ToArray());
+				var resultType = BlendTypeFactory.From(type, isPointer, dimCountArray.ToArray());
 				return new BlendStructureType.MemberDecl(baseName, resultType);
 			}
 			else

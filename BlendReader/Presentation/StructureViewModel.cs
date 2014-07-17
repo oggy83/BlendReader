@@ -60,7 +60,7 @@ namespace Blender
 				{
 					// dereference
 					var address = (BlendAddress)node.m_value.RawValue;
-					var pointerType = (QualifiedBlendType)node.m_value.Type;
+					var pointerType = (BlendPointerType)node.m_value.Type;
 					var baseType = pointerType.BaseType;
 					if (address.CanDereference(baseType))
 					{
@@ -184,16 +184,7 @@ namespace Blender
 			{
 				get
 				{
-					if (m_value.Type is QualifiedBlendType)
-					{
-						var type = (QualifiedBlendType)m_value.Type;
-						if (type.IsPointer && !type.IsArray)
-						{
-							return true;
-						}
-					}
-
-					return false;
+					return m_value.Type is BlendPointerType;
 				}
 			}
 
@@ -201,13 +192,7 @@ namespace Blender
 			{
 				get
 				{
-					if (m_value.Type is QualifiedBlendType)
-					{
-						var type = (QualifiedBlendType)m_value.Type;
-						return type.IsArray;
-					}
-
-					return false; 
+					return m_value.Type is QualifiedBlendType;
 				}
 			}
 

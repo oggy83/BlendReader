@@ -136,14 +136,14 @@ namespace Blender
 		public static BlendValue GetMemberValue(BlendValue value, string name)
 		{
 			Debug.Assert(value.Type.GetType() == typeof(BlendStructureType), "tyep unmatched");
-			var rawValue = value.RawValue as Dictionary<string, BlendValue>;
+			var rawValue = value.RawValue as _RawValue;
 			return rawValue[name];
 		}
 
 		public static IEnumerable<object> GetAllRawValue(BlendValue value)
 		{
 			Debug.Assert(value.Type.GetType() == typeof(BlendStructureType), "tyep unmatched");
-			var rawValue = value.RawValue as Dictionary<string, BlendValue>;
+			var rawValue = value.RawValue as _RawValue;
 			foreach (var memberValue in rawValue.Values.SelectMany(v => v.GetAllValue()))
 			{
 				yield return memberValue;

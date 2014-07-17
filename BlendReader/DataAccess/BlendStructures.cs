@@ -13,21 +13,21 @@ namespace Blender
 		public static BlendStructureType GlobalHeader = 
 			new BlendStructureType("GlobalHeader", new BlendStructureType.MemberDecl[] 
 			{
-				new BlendStructureType.MemberDecl("identifier", new QualifiedBlendType(BlendPrimitiveType.Char(), false, 7, 0)),
-				new BlendStructureType.MemberDecl("pointer_size", new QualifiedBlendType(BlendPrimitiveType.Char(), false, 0, 0)),
-				new BlendStructureType.MemberDecl("endianness", new QualifiedBlendType(BlendPrimitiveType.Char(), false, 0, 0)),
-				new BlendStructureType.MemberDecl("version_numbers", new QualifiedBlendType(BlendPrimitiveType.Char(), false, 3, 0))
+				new BlendStructureType.MemberDecl("identifier", BlendTypeFactory.From(BlendPrimitiveType.Char(), false, 7, 0)),
+				new BlendStructureType.MemberDecl("pointer_size", BlendTypeFactory.From(BlendPrimitiveType.Char(), false, 0, 0)),
+				new BlendStructureType.MemberDecl("endianness", BlendTypeFactory.From(BlendPrimitiveType.Char(), false, 0, 0)),
+				new BlendStructureType.MemberDecl("version_numbers", BlendTypeFactory.From(BlendPrimitiveType.Char(), false, 3, 0))
 			});
 
 
 		public static BlendStructureType FileBlockHeader = 
 			new BlendStructureType("FileBlockHeader", new BlendStructureType.MemberDecl[]
 			{
-				new BlendStructureType.MemberDecl("code", new QualifiedBlendType(BlendPrimitiveType.Char(), false, 4, 0)),
-				new BlendStructureType.MemberDecl("size", new QualifiedBlendType(BlendPrimitiveType.Int(), false, 0, 0)),
-				new BlendStructureType.MemberDecl("old_memory_address", new QualifiedBlendType(BlendPrimitiveType.Void(), true, 0, 0)),
-				new BlendStructureType.MemberDecl("sdna_index", new QualifiedBlendType(BlendPrimitiveType.Int(), false, 0, 0)),
-				new BlendStructureType.MemberDecl("count", new QualifiedBlendType(BlendPrimitiveType.Int(), false, 0, 0)),
+				new BlendStructureType.MemberDecl("code", BlendTypeFactory.From(BlendPrimitiveType.Char(), false, 4, 0)),
+				new BlendStructureType.MemberDecl("size", BlendTypeFactory.From(BlendPrimitiveType.Int(), false, 0, 0)),
+				new BlendStructureType.MemberDecl("old_memory_address", BlendTypeFactory.From(BlendPrimitiveType.Void(), true, 0, 0)),
+				new BlendStructureType.MemberDecl("sdna_index", BlendTypeFactory.From(BlendPrimitiveType.Int(), false, 0, 0)),
+				new BlendStructureType.MemberDecl("count", BlendTypeFactory.From(BlendPrimitiveType.Int(), false, 0, 0)),
 			});
 
 		

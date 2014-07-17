@@ -15,7 +15,7 @@ namespace Blender
 	{
 		#region propertis
 
-		public int ArrayDimension
+		public virtual int ArrayDimension
 		{
 			get
 			{
@@ -25,7 +25,7 @@ namespace Blender
 			}
 		}
 
-		public bool IsArray
+		public virtual bool IsArray
 		{
 			get
 			{
@@ -33,30 +33,15 @@ namespace Blender
 			}
 		}
 
-		public bool IsPointer
-		{
-			get
-			{
-				return m_isPointer;
-			}
-		}
-
 		/// <summary>
 		/// get a pre-qualified type
 		/// </summary>
-		private IBlendType m_baseType;
-		public IBlendType BaseType
+		protected IBlendType m_baseType;
+		public virtual IBlendType BaseType
 		{
 			get
 			{
-				if (IsArray)
-				{
-					return new QualifiedBlendType(m_baseType, IsPointer, 0, 0);
-				}
-				else
-				{
-					return m_baseType;
-				}
+				return m_baseType;
 			}
 		}
 
@@ -66,19 +51,17 @@ namespace Blender
 		/// Constructor for a full-spec 
 		/// </summary>
 		/// <param name="type">base type</param>
-		/// <param name="isPointer">is pointer type</param>
 		/// <param name="dim1Count">first dimension count for array</param>
 		/// <param name="dim2Count">second dimension count for array</param>
 		/// <remarks>
 		/// If you do not want to an array type, set dim1Count and dim2Count to 0.
 		/// Array and pointer type meanns an array of pointer type.
 		/// </remarks>
-		public QualifiedBlendType(IBlendType type, bool isPointer, int dim1Count, int dim2Count)
+		public QualifiedBlendType(IBlendType type, int dim1Count, int dim2Count)
 		{
 			Debug.Assert(type != null, "type must not be null");
 
 			m_baseType = type;
-			m_isPointer = isPointer;
 
 			// Build array 
 			int dimension = dim1Count == 0
@@ -102,18 +85,16 @@ namespace Blender
 		/// Constructor for a full-spec 
 		/// </summary>
 		/// <param name="type">base type</param>
-		/// <param name="isPointer">is pointer type</param>
 		/// <param name="dimCountArray">array of size</param>
 		/// <remarks>
 		/// If you do not want to an array type, set dimCountArray to length 0 array.
 		/// Array and pointer type meanns an array of pointer type.
 		/// </remarks>
-		public QualifiedBlendType(IBlendType type, bool isPointer, int[] dimCountArray)
+		public QualifiedBlendType(IBlendType type, int[] dimCountArray)
 		{
 			Debug.Assert(type != null, "type must not be null");
 
 			m_baseType = type;
-			m_isPointer = isPointer;
 			if (dimCountArray.Length != 0)
 			{
 				m_dimCountArray = new int[dimCountArray.Length];
@@ -122,30 +103,12 @@ namespace Blender
 		}
 
 		/// <summary>
-		/// Constructor for a simple wrapper
-		/// </summary>
-		/// <param name="baseType">base type</param>
-		public QualifiedBlendType(IBlendType baseType)
-		: this(baseType, false, 0, 0)
-		{
-			// nothing	
-		}
-
-		/// <summary>
 		/// get size of this type
 		/// </summary>
 		/// <returns>size [byte]</returns>
-		public int SizeOf()
+		public virtual int SizeOf()
 		{
-			int size = 0;
-			if (IsPointer)
-			{
-				size = GetPointerSizeOf();
-			}
-			else
-			{
-				size = m_baseType.SizeOf();
-			}
+			int size = m_baseType.SizeOf();
 
 			int elemCount = 1;
 			if (m_dimCountArray != null)
@@ -164,7 +127,7 @@ namespace Blender
 			return Name;
 		}
 
-		public bool Equals(IBlendType type)
+		public virtual bool Equals(IBlendType type)
 		{
 			var qualified = type as QualifiedBlendType;
 			if (qualified == null)
@@ -175,17 +138,9 @@ namespace Blender
 
 			return !m_baseType.Equals(qualified.m_baseType)
 				? false
-				: IsPointer != qualified.IsPointer
+				: !_Equals(m_dimCountArray, qualified.m_dimCountArray)
 					? false
-					: !_Equals(m_dimCountArray, qualified.m_dimCountArray)
-						? false
-						: true;
-		}
-
-		public static int GetPointerSizeOf()
-		{
-			// assumes 64bit environment
-			return 8;
+					: true;
 		}
 
 		/// <summary>
@@ -194,20 +149,17 @@ namespace Blender
 		/// <param name="context">variable for making a value</param>
 		/// <returns>value</returns>
 		/// <seealso cref="IBlendType.ReadValue"/>
-		public BlendValue ReadValue(ReadValueContext context)
+		public virtual BlendValue ReadValue(ReadValueContext context)
 		{
 			object obj = null;
 			switch (ArrayDimension)
 			{
-				case 0:
-					obj = _Read(context, m_isPointer);
-					break;
 				case 1:
 					{
 						var objs = new object[m_dimCountArray[0]];
 						for (int i = 0; i < m_dimCountArray[0]; ++i)
 						{
-							objs[i] = _Read(context, m_isPointer);
+							objs[i] = _Read(context);
 						}
 						obj = objs;
 					}
@@ -221,7 +173,7 @@ namespace Blender
 							var tmp = new object[m_dimCountArray[1]];
 							for (int j = 0; j < m_dimCountArray[1]; ++j)
 							{
-								tmp[j] = _Read(context, m_isPointer);
+								tmp[j] = _Read(context);
 							}
 
 							objs[i] = tmp;
@@ -237,17 +189,11 @@ namespace Blender
 		/// <summary>
 		/// get a name of type
 		/// </summary>
-		public string Name
+		public virtual string Name
 		{
 			get
 			{
 				string str = m_baseType.ToString();
-
-				// process pointer
-				if (m_isPointer)
-				{
-					str += "*";
-				}
 
 				// process an array dimension
 				if (m_dimCountArray != null)
@@ -272,62 +218,17 @@ namespace Blender
 			return m_dimCountArray[dimensionIndex];
 		}
 
-		/// <summary>
-		/// factory method 
-		/// </summary>
-		/// <param name="type">base type</param>
-		/// <param name="isPointer">is pointer type</param>
-		/// <param name="dimCountArray">array of size</param>
-		/// <remarks>
-		/// if any params do not qualify a base type, this methods just returns it.
-		/// see also constructors.
-		/// </remarks>
-		public static IBlendType From(IBlendType type, bool isPointer, int[] dimCountArray)
-		{
-			if (!isPointer && (dimCountArray == null || dimCountArray.Length == 0))
-			{
-				return type;
-			}
-			else
-			{
-				return new QualifiedBlendType(type, isPointer, dimCountArray);
-			}
-		}
-
 		#region private members
 
-		
-		bool m_isPointer;
 		int[] m_dimCountArray;
 
 		#endregion // private members
 
 		#region private methods
 
-		public Object _Read(ReadValueContext context, bool isPointer)
+		public Object _Read(ReadValueContext context)
 		{
-			object obj = null;
-			if (isPointer)
-			{
-				// read pointer type
-				if (GetPointerSizeOf() == 4)
-				{
-					// 32bit
-					obj = new BlendAddress(context.reader.ReadUInt32(), context.mapper);
-				}
-				else
-				{
-					// 64bit
-					obj = new BlendAddress(context.reader.ReadUInt64(), context.mapper);
-				}
-			}
-			else
-			{
-				// read base type
-				obj = m_baseType.ReadValue(context).RawValue;
-			}
-
-			return obj;
+			return m_baseType.ReadValue(context).RawValue;
 		}
 
 		public bool _Equals(int[] array1, int[] array2)
