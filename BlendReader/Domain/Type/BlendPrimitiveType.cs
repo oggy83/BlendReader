@@ -67,7 +67,7 @@ namespace Blender
 		/// <param name="context">variable for making a value</param>
 		/// <returns>value</returns>
 		/// <seealso cref="IBlendType.ReadValue"/>
-		public BlendValue ReadValue(ReadValueContext context)
+		public BlendValueCapsule ReadValue(ReadValueContext context)
 		{
 			object obj = null;
 			switch (m_type)
@@ -93,7 +93,7 @@ namespace Blender
 					break;
 			}
 
-			return new BlendValue(this, obj);
+			return new BlendValueCapsule(this, obj);
 		}
 
 		/// <summary>

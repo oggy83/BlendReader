@@ -120,27 +120,27 @@ namespace Blender
 		/// <param name="context">variable for making a value</param>
 		/// <returns>value</returns>
 		/// <seealso cref="IBlendType.ReadValue"/>
-		public BlendValue ReadValue(ReadValueContext context)
+		public BlendValueCapsule ReadValue(ReadValueContext context)
 		{
 			var rawValue = new _RawValue();
 
 			foreach (var decl in m_decls)
 			{
-				var obj = decl.Type.ReadValue(context).RawValue;
-				rawValue.Add(decl.Name, new BlendValue(decl.Type, obj));
+				var value = decl.Type.ReadValue(context);
+				rawValue.Add(decl.Name, value);
 			}
 
-			return new BlendValue(this, rawValue);
+			return new _BlendValueCapsule(this, rawValue);
 		}
 
-		public static BlendValue GetMemberValue(BlendValue value, string name)
+		public static BlendValueCapsule GetMemberValue(BlendValueCapsule value, string name)
 		{
 			Debug.Assert(value.Type.GetType() == typeof(BlendStructureType), "tyep unmatched");
 			var rawValue = value.RawValue as _RawValue;
 			return rawValue[name];
 		}
 
-		public static IEnumerable<object> GetAllRawValue(BlendValue value)
+		public static IEnumerable<object> GetAllRawValue(BlendValueCapsule value)
 		{
 			Debug.Assert(value.Type.GetType() == typeof(BlendStructureType), "tyep unmatched");
 			var rawValue = value.RawValue as _RawValue;
@@ -196,7 +196,22 @@ namespace Blender
 
 		#region private types
 
-		private class _RawValue : Dictionary<string, BlendValue> { }
+		private class _RawValue : Dictionary<string, BlendValueCapsule> { }
+
+		private class _BlendValueCapsule : BlendValueCapsule
+		{
+			public _BlendValueCapsule(IBlendType type, object value) : base(type, value) {}
+		
+			override public BlendValueCapsule GetMember(string name)
+			{
+				return BlendStructureType.GetMemberValue(this, name);
+			}
+
+			override public IEnumerable<object> GetAllValue()
+			{
+				return BlendStructureType.GetAllRawValue(this);
+			}
+		}
 
 		#endregion // private types
 

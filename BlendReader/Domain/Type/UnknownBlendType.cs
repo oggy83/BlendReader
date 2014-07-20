@@ -30,7 +30,7 @@ namespace Blender
 		/// <param name="context">variable for making a value</param>
 		/// <returns>value</returns>
 		/// <seealso cref="IBlendType.ReadValue"/>
-		public BlendValue ReadValue(ReadValueContext context)
+		public BlendValueCapsule ReadValue(ReadValueContext context)
 		{
 			var sb = new StringBuilder("0x");
 			for (int byteIndex = 0; byteIndex < m_size; ++byteIndex)
@@ -39,7 +39,7 @@ namespace Blender
 				sb.Append(b.ToString("x2"));
 			}
 
-			return new BlendValue(this, sb.ToString());
+			return new BlendValueCapsule(this, sb.ToString());
 		}
 
 		/// <summary>

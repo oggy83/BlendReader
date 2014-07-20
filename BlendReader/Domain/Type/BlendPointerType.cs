@@ -88,7 +88,7 @@ namespace Blender
 		/// <param name="context">variable for making a value</param>
 		/// <returns>value</returns>
 		/// <seealso cref="IBlendType.ReadValue"/>
-		public BlendValue ReadValue(ReadValueContext context)
+		public BlendValueCapsule ReadValue(ReadValueContext context)
 		{
 			object obj = null;
 			if (GetPointerSizeOf() == 4)
@@ -102,7 +102,7 @@ namespace Blender
 				obj = new BlendAddress(context.reader.ReadUInt64(), context.mapper);
 			}
 
-			return new BlendValue(this, obj);
+			return new BlendValueCapsule(this, obj);
 		}
 		
 	}

@@ -23,7 +23,7 @@ namespace Blender
 
 		#endregion // events
 
-		public StructureViewModel(BlendValue value)
+		public StructureViewModel(BlendValueCapsule value)
 		{
 			_Attach(value);
 		}
@@ -51,7 +51,7 @@ namespace Blender
 					var type = (BlendStructureType)node.m_value.Type;
 					foreach (var decl in type.MemberDecls)
 					{
-						var value = new BlendValue(decl.Type, node.m_value.GetMember(decl.Name).RawValue);
+						var value = node.m_value.GetMember(decl.Name);
 						var childNode = new _NodeModel(decl.Name, value);
 						yield return childNode;
 					}
@@ -64,7 +64,7 @@ namespace Blender
 					var baseType = pointerType.BaseType;
 					if (address.CanDereference(baseType))
 					{
-						List<BlendValue> result = null;
+						List<BlendValueCapsule> result = null;
 						try
 						{
 							if (baseType.Equals(BlendPrimitiveType.Void()))
@@ -211,7 +211,7 @@ namespace Blender
 
 			#endregion // properties
 
-			public _NodeModel(String name, BlendValue value)
+			public _NodeModel(String name, BlendValueCapsule value)
 			{
 				m_name = name;
 				m_value = value;
@@ -225,7 +225,7 @@ namespace Blender
 			#region private members
 
 			private String m_name;
-			public BlendValue m_value;// temp
+			public BlendValueCapsule m_value;// temp
 			private string m_cacheValue;
 
 			#endregion // private members
@@ -266,7 +266,7 @@ namespace Blender
 
 		#region private methods
 
-		public void _Attach(BlendValue value)
+		public void _Attach(BlendValueCapsule value)
 		{
 			m_rootNode = new _NodeModel("ROOT", value);
 		}

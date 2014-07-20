@@ -61,7 +61,7 @@
     <Compile Include="Domain\Type\BlendPrimitiveType.cs" />
     <Compile Include="Domain\BlendEntityBase.cs" />
     <Compile Include="Domain\Type\BlendStructureType.cs" />
-    <Compile Include="Domain\BlendValue.cs" />
+    <Compile Include="Domain\BlendValueCapsule.cs" />
     <Compile Include="Domain\BlockHeaderEntity.cs" />
     <Compile Include="Domain\Type\BlendTypeFactory.cs" />
     <Compile Include="Domain\Type\BlendArrayType.cs" />

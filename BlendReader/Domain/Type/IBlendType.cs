@@ -42,7 +42,7 @@ namespace Blender
 		/// <remarks>
 		/// this method read SizeOf() bytes from the given binary stream
 		/// </remarks>
-		BlendValue ReadValue(ReadValueContext context);
+		BlendValueCapsule ReadValue(ReadValueContext context);
 
 		/// <summary>
 		/// get a name of type

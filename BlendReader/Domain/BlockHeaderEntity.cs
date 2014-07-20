@@ -61,7 +61,7 @@ namespace Blender
 
 		#endregion // properties
 
-		public BlockHeaderEntity(BlendValue value)
+		public BlockHeaderEntity(BlendValueCapsule value)
 			: base(value.GetMember("code").GetAllValueAsString(), value)
 		{
 			m_address = (BlendAddress)Value.GetMember("old_memory_address").RawValue;

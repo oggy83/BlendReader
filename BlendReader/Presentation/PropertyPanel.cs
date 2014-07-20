@@ -18,7 +18,7 @@ namespace Blender
 			//this.treeViewAdv1.Model = m_structureViewModel;
 		}
 
-		public void Attach(BlendValue value)
+		public void Attach(BlendValueCapsule value)
 		{
 			if (value == null)
 			{

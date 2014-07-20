@@ -19,8 +19,8 @@ namespace Blender
 			}
 		}
 
-		private BlendValue m_value;
-		public BlendValue Value
+		private BlendValueCapsule m_value;
+		public BlendValueCapsule Value
 		{
 			get
 			{
@@ -39,7 +39,7 @@ namespace Blender
 
 		#endregion // properties
 
-		public BlendEntityBase(String name, BlendValue value)
+		public BlendEntityBase(String name, BlendValueCapsule value)
 		{
 			m_name = name;
 			m_value = value;

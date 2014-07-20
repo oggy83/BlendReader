@@ -164,17 +164,17 @@ namespace Blender
 		/// <param name="context">variable for making a value</param>
 		/// <returns>value</returns>
 		/// <seealso cref="IBlendType.ReadValue"/>
-		public virtual BlendValue ReadValue(ReadValueContext context)
+		public virtual BlendValueCapsule ReadValue(ReadValueContext context)
 		{
 			object obj = null;
 			switch (ArrayDimension)
 			{
 				case 1:
 					{
-						var objs = new BlendValue[m_dimCountArray[0]];
+						var objs = new BlendValueCapsule[m_dimCountArray[0]];
 						for (int i = 0; i < m_dimCountArray[0]; ++i)
 						{
-							objs[i] = new BlendValue(m_baseType, m_baseType.ReadValue(context).RawValue);
+							objs[i] = m_baseType.ReadValue(context);
 						}
 						obj = objs;
 					}
@@ -185,10 +185,10 @@ namespace Blender
 
 						for (int i = 0; i < m_dimCountArray[0]; ++i)
 						{
-							var tmp = new BlendValue[m_dimCountArray[1]];
+							var tmp = new BlendValueCapsule[m_dimCountArray[1]];
 							for (int j = 0; j < m_dimCountArray[1]; ++j)
 							{
-								tmp[j] = new BlendValue(m_baseType, m_baseType.ReadValue(context).RawValue);
+								tmp[j] = m_baseType.ReadValue(context);
 							}
 
 							objs[i] = tmp;
@@ -198,25 +198,25 @@ namespace Blender
 					break;
 			}
 
-			return new BlendValue(this, obj);
+			return new _BlendValueCapsule(this, obj);
 		}
 
-		public static BlendValue GetAt(BlendValue value, int index1)
+		public static BlendValueCapsule GetAt(BlendValueCapsule value, int index1)
 		{
 			Debug.Assert(value.Type.GetType() == typeof(BlendArrayType), "tyep unmatched");
-			var rawValue = value.RawValue as BlendValue[];
+			var rawValue = value.RawValue as BlendValueCapsule[];
 			return rawValue[index1];
 		}
 
-		public static BlendValue GetAt(BlendValue value, int index1, int index2)
+		public static BlendValueCapsule GetAt(BlendValueCapsule value, int index1, int index2)
 		{
 			Debug.Assert(value.Type.GetType() == typeof(BlendArrayType), "tyep unmatched");
 			var rawValue1 = value.RawValue as object[];
-			var rawValue2 = rawValue1[index1] as BlendValue[];
+			var rawValue2 = rawValue1[index1] as BlendValueCapsule[];
 			return rawValue2[index2];
 		}
 
-		public static IEnumerable<object> GetAllRawValue(BlendValue value)
+		public static IEnumerable<object> GetAllRawValue(BlendValueCapsule value)
 		{
 			Debug.Assert(value.Type.GetType() == typeof(BlendArrayType), "tyep unmatched");
 			var type = (BlendArrayType)value.Type;
@@ -226,13 +226,13 @@ namespace Blender
 				if (type.BaseType.Equals(BlendPrimitiveType.Char()))
 				{
 					// Parse as string
-					var objs = (BlendValue[])value.RawValue;
+					var objs = (BlendValueCapsule[])value.RawValue;
 					yield return ConvertUtil.CharArray2String(objs.Select(o => o.RawValue));
 				}
 				else
 				{
 					// Parse as 1 dimension array
-					var objs = (BlendValue[])value.RawValue;
+					var objs = (BlendValueCapsule[])value.RawValue;
 					foreach (var obj in objs.SelectMany(v => v.GetAllValue()))
 					{
 						yield return obj;
@@ -243,7 +243,7 @@ namespace Blender
 			{
 				// Parse as 2 dimension array
 				var objs1 = (object[])value.RawValue;
-				foreach (BlendValue[] objs2 in objs1)
+				foreach (BlendValueCapsule[] objs2 in objs1)
 				{
 					foreach (var obj in objs2.SelectMany(v => v.GetAllValue()))
 					{
@@ -268,6 +268,30 @@ namespace Blender
 		{
 			return m_dimCountArray[dimensionIndex];
 		}
+
+		#region private types
+
+		private class _BlendValueCapsule : BlendValueCapsule
+		{
+			public _BlendValueCapsule(IBlendType type, object value) : base(type, value) { }
+
+			override public BlendValueCapsule GetAt(int index)
+			{
+				return BlendArrayType.GetAt(this, index);
+			}
+
+			override public BlendValueCapsule GetAt(int index1, int index2)
+			{
+				return BlendArrayType.GetAt(this, index1, index2);
+			}
+
+			override public IEnumerable<object> GetAllValue()
+			{
+				return BlendArrayType.GetAllRawValue(this);
+			}
+		}
+
+		#endregion // private types
 
 		#region private members
 

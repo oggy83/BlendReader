@@ -60,9 +60,9 @@ namespace Blender
 			return false;
 		}
 
-		public BlendValue DereferenceOne(IBlendType type)
+		public BlendValueCapsule DereferenceOne(IBlendType type)
 		{
-			BlendValue result = null;
+			BlendValueCapsule result = null;
 			try
 			{
 				int offset = (int)m_address;
@@ -80,9 +80,9 @@ namespace Blender
 			return result;
 		}
 
-		public List<BlendValue> DereferenceAll(IBlendType type)
+		public List<BlendValueCapsule> DereferenceAll(IBlendType type)
 		{
-			var result = new List<BlendValue>();
+			var result = new List<BlendValueCapsule>();
 			try
 			{
 				int offset = (int)m_address;
@@ -105,14 +105,14 @@ namespace Blender
 			return result;
 		}
 
-		public BlendValue DereferenceOne()
+		public BlendValueCapsule DereferenceOne()
 		{
 			return m_mapper != null? DereferenceOne(m_mapper.GetHintType(m_address)) : null;
 		}
 
-		public List<BlendValue> DereferenceAll()
+		public List<BlendValueCapsule> DereferenceAll()
 		{
-			return m_mapper != null ? DereferenceAll(m_mapper.GetHintType(m_address)) : new List<BlendValue>();
+			return m_mapper != null ? DereferenceAll(m_mapper.GetHintType(m_address)) : new List<BlendValueCapsule>();
 		}
 
 		public bool IsNull()
