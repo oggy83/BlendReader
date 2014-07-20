@@ -17,6 +17,8 @@ namespace Blender
 		/// <remarks>
 		/// if any params do not qualify a base type, this methods just returns it.
 		/// see also constructors.
+		/// If you do not want to an array type, set dim1Count and dim2Count to 0.
+		/// Array and pointer type meanns an array of pointer type.
 		/// </remarks>
 		public static IBlendType From(IBlendType type, bool isPointer, int[] dimCountArray)
 		{
@@ -31,36 +33,10 @@ namespace Blender
 			}
 			else
 			{
-				return new QualifiedBlendType(type, dimCountArray);
+				return new BlendArrayType(type, dimCountArray);
 			}
 		}
 
-		/// <summary>
-		/// factory method 
-		/// </summary>
-		/// <param name="type">base type</param>
-		/// <param name="isPointer">is pointer type</param>
-		/// <param name="dimCountArray">array of size</param>
-		/// <remarks>
-		/// if any params do not qualify a base type, this methods just returns it.
-		/// see also constructors.
-		/// </remarks>
-		public static IBlendType From(IBlendType type, bool isPointer, int a, int b)
-		{
-			if (isPointer)
-			{
-				type = new BlendPointerType(type);
-			}
-
-			if ((a == 0 && b == 0))
-			{
-				return type;
-			}
-			else
-			{
-				return new QualifiedBlendType(type, a, b);
-			}
-		}
 		
 	}
 }

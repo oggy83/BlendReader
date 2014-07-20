@@ -102,7 +102,7 @@ namespace Blender
 				}
 				else if (node.IsArray)
 				{
-					var arrayType = (QualifiedBlendType)node.m_value.Type;
+					var arrayType = (BlendArrayType)node.m_value.Type;
 					int arrayCount = arrayType.ArrayDimension;
 					switch (arrayCount)
 					{
@@ -192,7 +192,7 @@ namespace Blender
 			{
 				get
 				{
-					return m_value.Type is QualifiedBlendType;
+					return m_value.Type is BlendArrayType;
 				}
 			}
 

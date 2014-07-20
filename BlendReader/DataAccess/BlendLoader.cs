@@ -122,7 +122,7 @@ namespace Blender
 			while (true)
 			{
 				var fileBlock = BlendStructures.FileBlockHeader.ReadValue(context);
-				var code = ConvertUtil.CharArray2String(fileBlock.GetMember("code").RawValue);
+				var code = fileBlock.GetMember("code").GetAllValueAsString();
 				int size = (int)fileBlock.GetMember("size").RawValue;
 
 				if (code == "DNA1")

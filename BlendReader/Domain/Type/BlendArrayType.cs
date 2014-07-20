@@ -9,9 +9,9 @@ using System.Diagnostics;
 namespace Blender
 {
 	/// <summary>
-	/// This class wraps base type and supports array and pointer type.
+	/// This class represents array type
 	/// </summary>
-	public class QualifiedBlendType : IBlendType
+	public class BlendArrayType : IBlendType
 	{
 		#region propertis
 
@@ -45,6 +45,29 @@ namespace Blender
 			}
 		}
 
+		/// <summary>
+		/// get a name of type
+		/// </summary>
+		public virtual string Name
+		{
+			get
+			{
+				string str = m_baseType.ToString();
+
+				// process an array dimension
+				if (m_dimCountArray != null)
+				{
+					for (int indexDim = 0; indexDim < ArrayDimension; ++indexDim)
+					{
+						str += ("[" + m_dimCountArray[indexDim] + "]");
+					}
+				}
+
+				return str;
+			}
+		}
+
+
 		#endregion // properties
 
 		/// <summary>
@@ -53,11 +76,7 @@ namespace Blender
 		/// <param name="type">base type</param>
 		/// <param name="dim1Count">first dimension count for array</param>
 		/// <param name="dim2Count">second dimension count for array</param>
-		/// <remarks>
-		/// If you do not want to an array type, set dim1Count and dim2Count to 0.
-		/// Array and pointer type meanns an array of pointer type.
-		/// </remarks>
-		public QualifiedBlendType(IBlendType type, int dim1Count, int dim2Count)
+		public BlendArrayType(IBlendType type, int dim1Count, int dim2Count)
 		{
 			Debug.Assert(type != null, "type must not be null");
 
@@ -86,11 +105,7 @@ namespace Blender
 		/// </summary>
 		/// <param name="type">base type</param>
 		/// <param name="dimCountArray">array of size</param>
-		/// <remarks>
-		/// If you do not want to an array type, set dimCountArray to length 0 array.
-		/// Array and pointer type meanns an array of pointer type.
-		/// </remarks>
-		public QualifiedBlendType(IBlendType type, int[] dimCountArray)
+		public BlendArrayType(IBlendType type, int[] dimCountArray)
 		{
 			Debug.Assert(type != null, "type must not be null");
 
@@ -129,7 +144,7 @@ namespace Blender
 
 		public virtual bool Equals(IBlendType type)
 		{
-			var qualified = type as QualifiedBlendType;
+			var qualified = type as BlendArrayType;
 			if (qualified == null)
 			{
 				// type unmatched
@@ -156,10 +171,10 @@ namespace Blender
 			{
 				case 1:
 					{
-						var objs = new object[m_dimCountArray[0]];
+						var objs = new BlendValue[m_dimCountArray[0]];
 						for (int i = 0; i < m_dimCountArray[0]; ++i)
 						{
-							objs[i] = _Read(context);
+							objs[i] = new BlendValue(m_baseType, m_baseType.ReadValue(context).RawValue);
 						}
 						obj = objs;
 					}
@@ -170,10 +185,10 @@ namespace Blender
 
 						for (int i = 0; i < m_dimCountArray[0]; ++i)
 						{
-							var tmp = new object[m_dimCountArray[1]];
+							var tmp = new BlendValue[m_dimCountArray[1]];
 							for (int j = 0; j < m_dimCountArray[1]; ++j)
 							{
-								tmp[j] = _Read(context);
+								tmp[j] = new BlendValue(m_baseType, m_baseType.ReadValue(context).RawValue);
 							}
 
 							objs[i] = tmp;
@@ -186,28 +201,64 @@ namespace Blender
 			return new BlendValue(this, obj);
 		}
 
-		/// <summary>
-		/// get a name of type
-		/// </summary>
-		public virtual string Name
+		public static BlendValue GetAt(BlendValue value, int index1)
 		{
-			get
-			{
-				string str = m_baseType.ToString();
-
-				// process an array dimension
-				if (m_dimCountArray != null)
-				{
-					for (int indexDim = 0; indexDim < ArrayDimension; ++indexDim)
-					{
-						str += ("[" + m_dimCountArray[indexDim] + "]");
-					}
-				}
-
-				return str;
-			}
+			Debug.Assert(value.Type.GetType() == typeof(BlendArrayType), "tyep unmatched");
+			var rawValue = value.RawValue as BlendValue[];
+			return rawValue[index1];
 		}
 
+		public static BlendValue GetAt(BlendValue value, int index1, int index2)
+		{
+			Debug.Assert(value.Type.GetType() == typeof(BlendArrayType), "tyep unmatched");
+			var rawValue1 = value.RawValue as object[];
+			var rawValue2 = rawValue1[index1] as BlendValue[];
+			return rawValue2[index2];
+		}
+
+		public static IEnumerable<object> GetAllRawValue(BlendValue value)
+		{
+			Debug.Assert(value.Type.GetType() == typeof(BlendArrayType), "tyep unmatched");
+			var type = (BlendArrayType)value.Type;
+
+			if (type.ArrayDimension == 1)
+			{
+				if (type.BaseType.Equals(BlendPrimitiveType.Char()))
+				{
+					// Parse as string
+					var objs = (BlendValue[])value.RawValue;
+					yield return ConvertUtil.CharArray2String(objs.Select(o => o.RawValue));
+				}
+				else
+				{
+					// Parse as 1 dimension array
+					var objs = (BlendValue[])value.RawValue;
+					foreach (var obj in objs.SelectMany(v => v.GetAllValue()))
+					{
+						yield return obj;
+					}
+				}
+			}
+			else if (type.ArrayDimension == 2)
+			{
+				// Parse as 2 dimension array
+				var objs1 = (object[])value.RawValue;
+				foreach (BlendValue[] objs2 in objs1)
+				{
+					foreach (var obj in objs2.SelectMany(v => v.GetAllValue()))
+					{
+						yield return obj;
+					}
+				}
+			}
+			else
+			{
+				Debug.Assert(false, "logic error");
+			}
+			
+		}
+
+		
 		/// <summary>
 		/// get a length of array
 		/// </summary>
@@ -226,12 +277,7 @@ namespace Blender
 
 		#region private methods
 
-		public Object _Read(ReadValueContext context)
-		{
-			return m_baseType.ReadValue(context).RawValue;
-		}
-
-		public bool _Equals(int[] array1, int[] array2)
+		private bool _Equals(int[] array1, int[] array2)
 		{
 			if (array1 != null && array2 != null)
 			{

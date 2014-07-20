@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Diagnostics;
 
 namespace Blender
 {
@@ -11,13 +12,17 @@ namespace Blender
 		public BlenderException(string message)
 		: base(message)
 		{
-			// nothing
+#if DEBUG
+			Debugger.Break();
+#endif
 		}
 
 		public BlenderException(string format, params object[] args)
 			: base(String.Format(format, args))
 		{
-			// nothing
+#if DEBUG
+			Debugger.Break();
+#endif
 		}
 
 	}

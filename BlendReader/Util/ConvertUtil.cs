@@ -8,11 +8,10 @@ namespace Blender
 {
 	public static class ConvertUtil
 	{
-		public static String CharArray2String(object obj)
+		public static String CharArray2String(IEnumerable<object> obj)
 		{
 			var sb = new StringBuilder();
-			object[] array = (object[])obj;
-			foreach (object o in array)
+			foreach (object o in obj)
 			{
 				char? c = (char?)o;
 				if (c == '\0')
