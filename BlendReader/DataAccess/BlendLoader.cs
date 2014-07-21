@@ -298,13 +298,7 @@ namespace Blender
 				string baseName = match.Groups[2].Value;
 
 				// parse pointer qualifiers
-				bool isPointer = (pointers.Length >= 1);
-				if (pointers.Length >= 2)
-				{
-					// double pointer is unsupported
-					int ptSize = BlendPointerType.GetPointerSizeOf();
-					return new BlendStructureType.MemberDecl(baseName, new UnknownBlendType(description, ptSize));
-				}
+				int pointerCount = pointers.Length;
 				
 				// parse array qualifiers
 				List<int> dimCountArray = new List<int>();
@@ -315,7 +309,7 @@ namespace Blender
 					dimCountArray.Add(int.Parse(size));
 				}
 
-				var resultType = BlendTypeFactory.From(type, isPointer, dimCountArray.ToArray());
+				var resultType = BlendTypeFactory.From(type, pointerCount, dimCountArray.ToArray());
 				return new BlendStructureType.MemberDecl(baseName, resultType);
 			}
 			else
