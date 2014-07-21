@@ -59,7 +59,7 @@ namespace Blender
 			return GetPointerSizeOf();
 		}
 
-		public String ToString()
+		override public String ToString()
 		{
 			return Name;
 		}

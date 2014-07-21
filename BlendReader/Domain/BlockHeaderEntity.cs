@@ -64,10 +64,10 @@ namespace Blender
 		public BlockHeaderEntity(BlendValueCapsule value)
 			: base(value.GetMember("code").GetAllValueAsString(), value)
 		{
-			m_address = (BlendAddress)Value.GetMember("old_memory_address").RawValue;
-			m_size = (int)value.GetMember("size").RawValue;
-			m_sdnaIndex = (int)value.GetMember("sdna_index").RawValue;
-			m_count = (int)value.GetMember("count").RawValue;
+			m_address = Value.GetMember("old_memory_address").GetRawValue<BlendAddress>();
+			m_size = value.GetMember("size").GetRawValue<int>();
+			m_sdnaIndex = value.GetMember("sdna_index").GetRawValue<int>();
+			m_count = value.GetMember("count").GetRawValue<int>();
 		}
 
 		public static BlockHeaderEntity ReadValue(ReadValueContext context)

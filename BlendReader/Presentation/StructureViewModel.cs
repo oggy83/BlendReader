@@ -59,7 +59,7 @@ namespace Blender
 				else if (node.IsPointer)
 				{
 					// dereference
-					var address = (BlendAddress)node.m_value.RawValue;
+					var address = node.m_value.GetRawValue<BlendAddress>();
 					var pointerType = (BlendPointerType)node.m_value.Type;
 					var baseType = pointerType.BaseType;
 					if (address.CanDereference(baseType))

@@ -204,14 +204,14 @@ namespace Blender
 		public static BlendValueCapsule GetAt(BlendValueCapsule value, int index1)
 		{
 			Debug.Assert(value.Type.GetType() == typeof(BlendArrayType), "tyep unmatched");
-			var rawValue = value.RawValue as BlendValueCapsule[];
+			var rawValue = value.GetRawValue() as BlendValueCapsule[];
 			return rawValue[index1];
 		}
 
 		public static BlendValueCapsule GetAt(BlendValueCapsule value, int index1, int index2)
 		{
 			Debug.Assert(value.Type.GetType() == typeof(BlendArrayType), "tyep unmatched");
-			var rawValue1 = value.RawValue as object[];
+			var rawValue1 = value.GetRawValue() as object[];
 			var rawValue2 = rawValue1[index1] as BlendValueCapsule[];
 			return rawValue2[index2];
 		}
@@ -226,13 +226,13 @@ namespace Blender
 				if (type.BaseType.Equals(BlendPrimitiveType.Char()))
 				{
 					// Parse as string
-					var objs = (BlendValueCapsule[])value.RawValue;
-					yield return ConvertUtil.CharArray2String(objs.Select(o => o.RawValue));
+					var objs = value.GetRawValue<BlendValueCapsule[]>();
+					yield return ConvertUtil.CharArray2String(objs.Select(o => o.GetRawValue()));
 				}
 				else
 				{
 					// Parse as 1 dimension array
-					var objs = (BlendValueCapsule[])value.RawValue;
+					var objs = value.GetRawValue<BlendValueCapsule[]>();
 					foreach (var obj in objs.SelectMany(v => v.GetAllValue()))
 					{
 						yield return obj;
@@ -242,7 +242,7 @@ namespace Blender
 			else if (type.ArrayDimension == 2)
 			{
 				// Parse as 2 dimension array
-				var objs1 = (object[])value.RawValue;
+				var objs1 = value.GetRawValue<object[]>();
 				foreach (BlendValueCapsule[] objs2 in objs1)
 				{
 					foreach (var obj in objs2.SelectMany(v => v.GetAllValue()))

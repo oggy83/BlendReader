@@ -14,13 +14,24 @@ namespace Blender
 	/// </remarks>
 	public class BlendValueCapsule
 	{
-		public IBlendType Type;
-		public object RawValue;
+		#region properties
+
+		private IBlendType m_type;
+		public IBlendType Type
+		{
+			get
+			{
+				return m_type;
+			}
+
+		}
+
+		#endregion // properties
 
 		public BlendValueCapsule(IBlendType type, object value)
 		{
-			Type = type;
-			RawValue = value;
+			m_type = type;
+			m_rawValue = value;
 		}
 
 		virtual public BlendValueCapsule GetAt(int index)
@@ -40,13 +51,28 @@ namespace Blender
 
 		virtual public IEnumerable<object> GetAllValue()
 		{
-			yield return RawValue;
+			yield return m_rawValue;
 		}
 
-		virtual public string GetAllValueAsString()
+		public string GetAllValueAsString()
 		{
 			return (string)GetAllValue().First();
 		}
 
+		public Type GetRawValue<Type>()
+		{
+			return (Type)m_rawValue;
+		}
+
+		public object GetRawValue()
+		{
+			return m_rawValue;
+		}
+
+		#region properties
+
+		private object m_rawValue;
+
+		#endregion // prorperties
 	}
 }
