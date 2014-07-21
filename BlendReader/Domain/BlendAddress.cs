@@ -62,6 +62,11 @@ namespace Blender
 
 		public BlendValueCapsule DereferenceOne(IBlendType type)
 		{
+			if (!CanDereference(type))
+			{
+				return null;
+			}
+
 			BlendValueCapsule result = null;
 			try
 			{
@@ -82,6 +87,11 @@ namespace Blender
 
 		public List<BlendValueCapsule> DereferenceAll(IBlendType type)
 		{
+			if (!CanDereference(type))
+			{
+				return null;
+			}
+
 			var result = new List<BlendValueCapsule>();
 			try
 			{

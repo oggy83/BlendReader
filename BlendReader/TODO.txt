@@ -24,4 +24,4 @@ void*のときはBlendAddressMapperから型を逆引きできるようにする
 BlendValue.GetAt() などで BlendValue を得られるように修正
 CharArray2String() のバグを修正
 参照先が配列だった場合は配列として展開する
-
+BlendValue回りをリファクタリング
