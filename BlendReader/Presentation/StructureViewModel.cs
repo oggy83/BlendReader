@@ -240,7 +240,7 @@ namespace Blender
 				}
 				else if (o is char)
 				{
-					return Convert.ToByte((char)o).ToString();
+					return string.Format("\'{0}\' {1}",(char)o, Convert.ToByte((char)o).ToString());
 				}
 				else if (o is BlendAddress)
 				{
