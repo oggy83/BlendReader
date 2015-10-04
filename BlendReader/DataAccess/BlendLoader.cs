@@ -369,7 +369,7 @@ namespace Blender
 							}
 							else
 							{
-								Debug.Assert(type.SizeOf() * blockEntity.Count == blockEntity.Size, "structure size unmatched");
+								Debug.Assert((type.SizeOf() * blockEntity.Count) == blockEntity.Size, "structure size unmatched");
 								for (int i = 0; i < blockEntity.Count; ++i)
 								{
 									var value = type.ReadValue(context);

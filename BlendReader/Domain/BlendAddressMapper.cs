@@ -36,16 +36,19 @@ namespace Blender
 		/// get a binary stream beginning from a given address
 		/// </summary>
 		/// <param name="address"></param>
+		/// <param name="outType"></param>
 		/// <returns></returns>
-		public Stream GetStreamFromAddress(ulong address)
+		public Stream GetStreamFromAddress(ulong address, out IBlendType outType)
 		{
 			Tuple<int, int, IBlendType> tmp;
 			if (!m_map.TryGetValue(address, out tmp))
 			{
+				outType = null;
 				return null;
 			}
 
-			return new MemoryStream(m_binary, tmp.Item1, tmp.Item2); 
+			outType = tmp.Item3;
+			return new MemoryStream(m_binary, tmp.Item1, tmp.Item2);
 		}
 
 		/// <summary>

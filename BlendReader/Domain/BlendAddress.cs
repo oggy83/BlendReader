@@ -71,7 +71,8 @@ namespace Blender
 			try
 			{
 				int offset = (int)m_address;
-				using (var reader = new BinaryReader(m_mapper.GetStreamFromAddress(m_address)))
+				IBlendType realType;
+				using (var reader = new BinaryReader(m_mapper.GetStreamFromAddress(m_address, out realType)))
 				{
 					var context = new ReadValueContext() { reader = reader, mapper = m_mapper };
 					result = type.ReadValue(context);
@@ -96,9 +97,12 @@ namespace Blender
 			try
 			{
 				int offset = (int)m_address;
-				using (var reader = new BinaryReader(m_mapper.GetStreamFromAddress(m_address)))
+				IBlendType realType;
+				using (var reader = new BinaryReader(m_mapper.GetStreamFromAddress(m_address, out realType)))
 				{
-					result.Capacity = (int)reader.BaseStream.Length / type.SizeOf();
+					type = realType != null ? realType : type;// if the given type is not equals to the real stored type, we belieave the real stored type.
+					int size = type.SizeOf();
+					result.Capacity = (int)reader.BaseStream.Length / size;
 					var context = new ReadValueContext() { reader = reader, mapper = m_mapper };
 					while (reader.BaseStream.Position < reader.BaseStream.Length)
 					{
