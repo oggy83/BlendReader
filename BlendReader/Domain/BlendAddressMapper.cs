@@ -15,7 +15,7 @@ namespace Blender
 	{
 		public BlendAddressMapper(byte[] binary)
 		{
-			m_binry = binary;
+			m_binary = binary;
 			m_map = new Dictionary<ulong, Tuple<int, int, IBlendType>>();
 		}
 
@@ -28,7 +28,7 @@ namespace Blender
 		/// <param name="type">hint type for dereference</param>
 		public void AddEntry(ulong address, int offset, int size, IBlendType type)
 		{
-			Debug.Assert(m_binry.Length >= (offset + size), "size is too big");
+			Debug.Assert(m_binary.Length >= (offset + size), "size is too big");
 			m_map.Add(address, Tuple.Create(offset, size, type));
 		}
 
@@ -45,7 +45,7 @@ namespace Blender
 				return null;
 			}
 
-			return new MemoryStream(m_binry, tmp.Item1, tmp.Item2); 
+			return new MemoryStream(m_binary, tmp.Item1, tmp.Item2); 
 		}
 
 		/// <summary>
@@ -66,7 +66,7 @@ namespace Blender
 
 		#region private members
 
-		private byte[] m_binry;
+		private byte[] m_binary;
 
 		private Dictionary<ulong, Tuple<int, int, IBlendType>> m_map;
 
