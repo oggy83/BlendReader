@@ -101,8 +101,7 @@ namespace Blender
 				using (var reader = new BinaryReader(m_mapper.GetStreamFromAddress(m_address, out realType)))
 				{
 					type = realType != null ? realType : type;// if the given type is not equals to the real stored type, we belieave the real stored type.
-					int size = type.SizeOf();
-					result.Capacity = (int)reader.BaseStream.Length / size;
+					result.Capacity = (int)reader.BaseStream.Length / type.SizeOf();
 					var context = new ReadValueContext() { reader = reader, mapper = m_mapper };
 					while (reader.BaseStream.Position < reader.BaseStream.Length)
 					{

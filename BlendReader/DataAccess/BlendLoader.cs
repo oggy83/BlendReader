@@ -359,7 +359,7 @@ namespace Blender
 
 							// register address mapping
 							int sdnaSize = blockEntity.Count * type.SizeOf();
-							context.mapper.AddEntry(blockEntity.OldAddress.Address, (int)context.reader.BaseStream.Position, blockEntity.Size, type);
+							context.mapper.AddEntry(blockEntity.OldAddress.Address, (int)context.reader.BaseStream.Position, blockEntity.Size, blockEntity.SdnaIndex, type);
 							
 							if (blockEntity.Count == 1 && blockEntity.SdnaIndex == 0 && blockEntity.Size != type.SizeOf())
 							{
